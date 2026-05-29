@@ -5,423 +5,712 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Hunt - MoK'Nathal</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@400;500;600&display=swap');
 
         :root {
-            --bg-color: #1a0000;
-            --container-bg: #2b0000;
-            --border-color: #5d0000;
-            --text-color: #fcebeb;
-            --accent-color: #e74c3c;
-            --dark-accent: #c0392b;
-            --disabled-bg: #4d1d1d;
-            --error-color: #ff0000;
-            --success-color: #2ecc71;
-            --glow-color: #ff5252;
+            --bg:           #0d0000;
+            --panel:        #160a0a;
+            --panel-alt:    #1e0e0e;
+            --border:       #4a0000;
+            --border-glow:  #8b0000;
+            --accent:       #e74c3c;
+            --accent2:      #ff6b4a;
+            --gold:         #f0c040;
+            --text:         #f0dada;
+            --text-muted:   #a07070;
+            --success:      #2ecc71;
+            --error:        #ff3333;
+            --glow:         #ff4444;
+            --cap-color:    #ff2222;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Cinzel', serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(139,0,0,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(100,0,0,0.1) 0%, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 30px 20px 60px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
         }
 
+        /* ── HEADER ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 36px;
+            width: 100%;
+        }
+
+        .page-header .subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85em;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .page-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.6rem, 4vw, 2.6rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b4a, #e74c3c, #c0392b, #ff6b4a);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 4s ease infinite, pulse-glow-text 3s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+
+        .header-line {
+            width: 180px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--accent), transparent);
+            margin: 12px auto 0;
+        }
+
+        @keyframes gradient-shift {
+            0%,100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+
+        @keyframes pulse-glow-text {
+            0%,100% { filter: drop-shadow(0 0 4px rgba(231,76,60,0.4)); }
+            50%      { filter: drop-shadow(0 0 14px rgba(255,107,74,0.8)); }
+        }
+
+        /* ── LAYOUT ── */
         .main-container {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 24px;
             width: 100%;
-            max-width: 1400px;
+            max-width: 1380px;
         }
 
-        .calculator-section, .quest-section {
-            background-color: var(--container-bg);
-            padding: 30px;
-            border-radius: 10px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            box-sizing: border-box;
+        /* ── PANELS ── */
+        .panel {
+            background: linear-gradient(160deg, var(--panel) 0%, var(--panel-alt) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
             position: relative;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,100,80,0.1);
         }
 
-        .calculator-section {
-            flex: 2;
-            min-width: 450px;
+        .panel::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, rgba(231,76,60,0.3), transparent 40%, transparent 60%, rgba(139,0,0,0.2));
+            pointer-events: none;
         }
 
-        .quest-section {
-            flex: 1;
-            min-width: 300px;
-        }
+        .calculator-section { flex: 2; min-width: 460px; }
+        .quest-section      { flex: 1; min-width: 300px; }
 
-        h1, h2 {
+        /* ── SECTION TITLES ── */
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
             text-align: center;
-            color: var(--accent-color);
-            text-shadow: 0 0 5px var(--dark-accent);
             margin-bottom: 20px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .input-group input[type="number"] {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            background-color: #3d0303;
-            color: var(--text-color);
-            border-radius: 5px;
-            font-size: 16px;
-            font-family: 'Cinzel', serif;
-        }
-
-        .attributes-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .attribute-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #330000;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .attribute-item label {
-            width: 110px;
-            font-size: 0.9em;
+        .section-title::before,
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-glow));
+        }
+        .section-title::after {
+            background: linear-gradient(to left, transparent, var(--border-glow));
         }
 
-        .attribute-item input {
-            width: 60px;
-            text-align: center;
+        /* ── NIVEL INPUT ── */
+        .nivel-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            transition: border-color 0.3s;
+        }
+
+        .nivel-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(231,76,60,0.25);
+        }
+
+        .nivel-wrapper .nivel-icon {
+            font-size: 1.8em;
+            line-height: 1;
+        }
+
+        .nivel-wrapper label {
             font-family: 'Cinzel', serif;
-            padding: 5px;
-            border: 1px solid var(--border-color);
-            background-color: #3d0303;
-            color: var(--text-color);
-            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
         }
 
-        .attribute-value {
-            font-weight: bold;
-            color: var(--accent-color);
-            min-width: 90px;
+        .nivel-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
             text-align: right;
+            min-width: 0;
         }
 
-        .attribute-value.capped {
-            color: var(--error-color);
-            text-shadow: 0 0 5px var(--error-color);
-        }
+        .nivel-wrapper input::-webkit-inner-spin-button,
+        .nivel-wrapper input::-webkit-outer-spin-button { opacity: 0.4; }
 
-        #porcentaje-total-display {
-            font-weight: bold;
-            text-align: center;
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: var(--border-color);
-            border: 1px dashed var(--accent-color);
-        }
-
-        .porcentaje-ok {
-            color: var(--success-color);
-        }
-
-        .porcentaje-nok {
-            color: var(--error-color);
-        }
-
+        /* ── DIVIDER ── */
         .divider {
-            border-top: 2px solid var(--border-color);
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-glow), transparent);
             margin: 20px 0;
         }
 
-        .quest-options {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        /* ── ATTRIBUTES ── */
+        .attributes-grid { display: flex; flex-direction: column; gap: 10px; }
+
+        .attribute-item {
+            display: grid;
+            grid-template-columns: 24px 1fr 70px auto 1fr;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--attr-color, var(--border));
+            border-radius: 8px;
+            padding: 10px 14px;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
         }
 
-        .quest-options label {
+        .attribute-item:hover {
+            background: rgba(100,0,0,0.2);
+            border-color: var(--attr-color, var(--accent));
+            box-shadow: 0 0 10px rgba(231,76,60,0.1);
+        }
+
+        .attr-icon { font-size: 1.1em; text-align: center; }
+
+        .attribute-item label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text);
+            cursor: default;
+        }
+
+        .attr-input-wrap {
             display: flex;
             align-items: center;
-            font-weight: normal;
-            cursor: pointer;
-            margin: 5px;
+            gap: 4px;
+            justify-content: flex-end;
+        }
+
+        .attribute-item input[type="number"] {
+            width: 64px;
+            padding: 6px 8px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .attribute-item input[type="number"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(231,76,60,0.3);
+        }
+
+        .attr-pct-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .attr-equals {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .attr-result-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .attribute-value {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent2);
             transition: color 0.3s;
         }
 
-        .quest-options label:hover {
-            color: var(--accent-color);
+        .attribute-value.capped {
+            color: var(--cap-color);
+            text-shadow: 0 0 8px var(--cap-color);
+            animation: flicker 1.5s ease-in-out infinite;
         }
 
-        .quest-options input[type="radio"] {
-            margin-right: 5px;
-            accent-color: var(--accent-color);
-        }
-
-        .quest-inputs-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            background-color: #330000;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px dashed var(--border-color);
-        }
-
-        .quest-inputs-grid .input-group label {
-            font-size: 0.9em;
-        }
-
-        input:disabled {
-            background-color: var(--disabled-bg);
-            cursor: not-allowed;
-            color: #999;
+        @keyframes flicker {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.7; }
         }
 
         .optimal-allocation {
-            font-size: 0.8em;
-            color: var(--text-color);
-            opacity: 0.7;
-            width: 110px;
-            text-align: right;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-family: 'Rajdhani', sans-serif;
         }
 
-        .footer {
+        /* ── PROGRESS BAR ── */
+        .progress-section {
+            margin-top: 18px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .progress-label { color: var(--text-muted); }
+
+        .progress-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: color 0.3s;
+        }
+
+        .progress-bar-track {
+            height: 8px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease, background 0.3s;
+            background: linear-gradient(to right, #c0392b, #e74c3c, #ff6b4a);
+            box-shadow: 0 0 8px rgba(231,76,60,0.6);
+        }
+
+        .progress-bar-fill.over  { background: linear-gradient(to right, #ff0000, #ff4444); }
+        .progress-bar-fill.exact { background: linear-gradient(to right, #27ae60, #2ecc71); box-shadow: 0 0 8px rgba(46,204,113,0.6); }
+
+        .progress-status {
             text-align: center;
-            margin-top: 40px;
-            font-size: 0.9em;
-            color: var(--text-color);
-            opacity: 0.6;
-            width: 100%;
+            margin-top: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s;
         }
 
-        .header-glow {
-            animation: pulse-glow 2s infinite ease-in-out;
+        /* ── QUEST CARDS ── */
+        .quest-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        @keyframes pulse-glow {
-            0%   { text-shadow: 0 0 5px var(--dark-accent); }
-            50%  { text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); }
-            100% { text-shadow: 0 0 5px var(--dark-accent); }
+        .quest-card {
+            position: relative;
+            cursor: pointer;
         }
 
-        @media (max-width: 900px) {
-            .main-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .calculator-section, .quest-section {
-                width: 100%;
-                min-width: unset;
-                max-width: 550px;
-            }
+        .quest-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0; height: 0;
+        }
+
+        .quest-card-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 8px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .quest-card-inner .quest-icon { font-size: 1.5em; }
+
+        .quest-card-inner .quest-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .quest-card:hover .quest-card-inner {
+            border-color: var(--accent);
+            background: rgba(100,0,0,0.2);
+        }
+
+        .quest-card input:checked + .quest-card-inner {
+            border-color: var(--accent);
+            background: rgba(139,0,0,0.35);
+            box-shadow: 0 0 14px rgba(231,76,60,0.3), inset 0 1px 0 rgba(255,100,80,0.15);
+        }
+
+        .quest-card input:checked + .quest-card-inner .quest-name {
+            color: var(--accent2);
+        }
+
+        /* ── QUEST INPUTS ── */
+        .quest-inputs-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .quest-input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quest-input-row .qi-icon { font-size: 1em; width: 20px; text-align: center; }
+
+        .quest-input-row label {
+            flex: 1;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .quest-input-row input {
+            width: 90px;
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: right;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .quest-input-row input:not(:disabled):focus {
+            border-color: var(--accent);
+        }
+
+        input:disabled {
+            background-color: rgba(0,0,0,0.2) !important;
+            color: var(--text-muted) !important;
+            cursor: not-allowed;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            margin-top: 44px;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            opacity: 0.55;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 960px) {
+            .main-container { flex-direction: column; align-items: center; }
+            .calculator-section, .quest-section { width: 100%; min-width: unset; max-width: 600px; }
+        }
+
+        @media (max-width: 500px) {
+            .attribute-item { grid-template-columns: 20px 1fr 64px auto 1fr; gap: 6px; padding: 8px 10px; }
+            .quest-options { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <div class="calculator-section">
-        <h1 class="header-glow">Calculadora de Hunt - MoK'Nathal</h1>
+<header class="page-header">
+    <p class="subtitle">&#9670; MEGAMU &#9670;</p>
+    <h1>Calculadora de Hunt — MoK'Nathal</h1>
+    <div class="header-line"></div>
+</header>
 
-        <div class="input-group">
-            <label for="nivel">Nivel del Personaje:</label>
-            <input type="number" id="nivel" value="0" min="0" step="1">
+<div class="main-container">
+
+    <!-- ── CALCULADORA ── -->
+    <div class="panel calculator-section">
+
+        <div class="nivel-wrapper">
+            <span class="nivel-icon">&#9876;</span>
+            <label for="nivel">Nivel del Personaje</label>
+            <input type="number" id="nivel" value="0" min="0" step="1" placeholder="0">
         </div>
 
-        <div class="divider"></div>
-
-        <h2>Distribución de Atributos (%)</h2>
+        <div class="section-title">Distribución de Atributos</div>
         <div class="attributes-grid"></div>
 
-        <div id="porcentaje-total-display">
-            Total de Porcentaje: <span id="porcentaje-total">0</span>%
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-label">Total distribuido</span>
+                <span class="progress-value" id="porcentaje-total-val">0%</span>
+            </div>
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-status" id="progress-status">Distribuí el 100% para calcular correctamente</div>
         </div>
     </div>
 
-    <div class="quest-section">
-        <h2>Valores del Item Quest</h2>
+    <!-- ── QUEST ── -->
+    <div class="panel quest-section">
+        <div class="section-title">Item Quest</div>
+
         <div class="quest-options">
-            <label><input type="radio" name="quest-type" value="damage" checked> Quest de Damage</label>
-            <label><input type="radio" name="quest-type" value="wizardry"> Quest de Wizardry</label>
-<label><input type="radio" name="quest-type" value="custom"> Personalizada</label>
+            <label class="quest-card">
+                <input type="radio" name="quest-type" value="damage" checked>
+                <div class="quest-card-inner">
+                    <span class="quest-icon">&#9876;</span>
+                    <span class="quest-name">Damage</span>
+                </div>
+            </label>
+            <label class="quest-card">
+                <input type="radio" name="quest-type" value="wizardry">
+                <div class="quest-card-inner">
+                    <span class="quest-icon">&#10024;</span>
+                    <span class="quest-name">Wizardry</span>
+                </div>
+            </label>
+            <label class="quest-card" style="grid-column: 1 / -1;">
+                <input type="radio" name="quest-type" value="custom">
+                <div class="quest-card-inner" style="flex-direction: row; gap: 10px; padding: 10px 16px;">
+                    <span class="quest-icon">&#9998;</span>
+                    <span class="quest-name">Personalizada</span>
+                </div>
+            </label>
         </div>
+
         <div id="quest-values-container" class="quest-inputs-grid"></div>
     </div>
 </div>
 
-<div class="footer">
-    Desarrollado por Soriente
-</div>
+<footer class="footer">Desarrollado por Soriente</footer>
 
 <script>
-    const nivelInput = document.getElementById('nivel');
+    const nivelInput   = document.getElementById('nivel');
     const questOptions = document.querySelectorAll('input[name="quest-type"]');
-    const questValuesContainer = document.getElementById('quest-values-container');
+    const questContainer = document.getElementById('quest-values-container');
     const attributesGrid = document.querySelector('.attributes-grid');
-    const porcentajeTotalDisplay = document.getElementById('porcentaje-total');
 
     const atributosData = [
-        { id: 'damage',    label: 'Daño (Damage)',      multiplier: 120,  cap: 65000 },
-        { id: 'defense',   label: 'Defensa (Defense)',  multiplier: 150,  cap: 65000 },
-        { id: 'hp',        label: 'Vida (HP)',           multiplier: 600,  cap: 65000 },
-        { id: 'mana',      label: 'Maná (Mana)',         multiplier: 600,  cap: 65000 },
-        { id: 'wizardry',  label: 'Magia (Wizardry)',    multiplier: 200,  cap: 65000 },
-        { id: 'recovery',  label: 'Recuperación',        multiplier: 0.3,  cap: null  },
-        { id: 'critical',  label: 'Crítico (Critical)',  multiplier: 0.6,  cap: null  },
-        { id: 'excellent', label: 'Excelente (Excellent)', multiplier: 0.6, cap: null }
+        { id: 'damage',    label: 'Daño',         sub: 'Damage',    icon: '⚔️',  multiplier: 120,  cap: 65000, color: '#e74c3c' },
+        { id: 'defense',   label: 'Defensa',      sub: 'Defense',   icon: '🛡️',  multiplier: 150,  cap: 65000, color: '#3498db' },
+        { id: 'hp',        label: 'Vida',          sub: 'HP',        icon: '❤️',  multiplier: 600,  cap: 65000, color: '#e74c3c' },
+        { id: 'mana',      label: 'Maná',          sub: 'Mana',      icon: '💧',  multiplier: 600,  cap: 65000, color: '#9b59b6' },
+        { id: 'wizardry',  label: 'Magia',         sub: 'Wizardry',  icon: '✨',  multiplier: 200,  cap: 65000, color: '#f39c12' },
+        { id: 'recovery',  label: 'Recuperación',  sub: 'Recovery',  icon: '💚',  multiplier: 0.3,  cap: null,  color: '#27ae60' },
+        { id: 'critical',  label: 'Crítico',       sub: 'Critical',  icon: '🎯',  multiplier: 0.6,  cap: null,  color: '#e67e22' },
+        { id: 'excellent', label: 'Excelente',     sub: 'Excellent', icon: '⭐',  multiplier: 0.6,  cap: null,  color: '#f1c40f' },
     ];
 
     const questsData = {
-        'damage':   { damage: 21200, defense: 2100,  hp: 9750,  mana: 0, wizardry: 0,     recovery: 0, critical: 3, excellent: 4 },
-        'wizardry': { damage: 0,     defense: 2100,  hp: 12950, mana: 0, wizardry: 13510, recovery: 0, critical: 3, excellent: 4 },
-'custom':   { damage: 0,     defense: 0,     hp: 0,     mana: 0, wizardry: 0,     recovery: 0, critical: 0, excellent: 0 }
+        damage:   { damage: 21200, defense: 2100,  hp: 9750,  mana: 0, wizardry: 0,     recovery: 0, critical: 3, excellent: 4 },
+        wizardry: { damage: 0,     defense: 2100,  hp: 12950, mana: 0, wizardry: 13510, recovery: 0, critical: 3, excellent: 4 },
+        custom:   { damage: 0,     defense: 0,     hp: 0,     mana: 0, wizardry: 0,     recovery: 0, critical: 0, excellent: 0 },
     };
 
     function createAttributeInputs() {
         attributesGrid.innerHTML = '';
-        atributosData.forEach(atributo => {
+        atributosData.forEach(a => {
             const item = document.createElement('div');
-            item.classList.add('attribute-item');
+            item.className = 'attribute-item';
+            item.style.setProperty('--attr-color', a.color);
             item.innerHTML = `
-                <label for="${atributo.id}-perc">${atributo.label}:</label>
-                <input type="number" id="${atributo.id}-perc" class="porcentaje" value="0" min="0" max="100">
-                <span>% = <span id="${atributo.id}-valor" class="attribute-value">0</span></span>
-                ${atributo.cap !== null ? `<span id="${atributo.id}-optimal" class="optimal-allocation"></span>` : ''}
+                <span class="attr-icon">${a.icon}</span>
+                <label for="${a.id}-perc">${a.label} <span style="color:var(--text-muted);font-size:.8em">${a.sub}</span></label>
+                <div class="attr-input-wrap">
+                    <input type="number" id="${a.id}-perc" class="porcentaje" value="0" min="0" max="100">
+                    <span class="attr-pct-label">%</span>
+                </div>
+                <span class="attr-equals">=</span>
+                <div class="attr-result-wrap">
+                    <span id="${a.id}-valor" class="attribute-value">0.00</span>
+                    ${a.cap !== null ? `<span id="${a.id}-optimal" class="optimal-allocation"></span>` : ''}
+                </div>
             `;
             attributesGrid.appendChild(item);
         });
-        document.querySelectorAll('.porcentaje').forEach(input => {
-            input.addEventListener('input', calcularAtributos);
-        });
+        document.querySelectorAll('.porcentaje').forEach(inp => inp.addEventListener('input', calcular));
     }
 
     function createQuestInputs() {
-        questValuesContainer.innerHTML = '';
-        atributosData.forEach(atributo => {
-            const inputGroup = document.createElement('div');
-            inputGroup.classList.add('input-group');
-            inputGroup.innerHTML = `
-                <label for="quest-${atributo.id}">${atributo.label}:</label>
-                <input type="number" id="quest-${atributo.id}" class="quest-input" value="0" min="0" step="1">
+        questContainer.innerHTML = '';
+        atributosData.forEach(a => {
+            const row = document.createElement('div');
+            row.className = 'quest-input-row';
+            row.innerHTML = `
+                <span class="qi-icon">${a.icon}</span>
+                <label for="quest-${a.id}">${a.label}</label>
+                <input type="number" id="quest-${a.id}" class="quest-input" value="0" min="0" step="1">
             `;
-            questValuesContainer.appendChild(inputGroup);
+            questContainer.appendChild(row);
         });
-        document.querySelectorAll('.quest-input').forEach(input => {
-            input.addEventListener('input', () => {
-                const selectedQuestType = document.querySelector('input[name="quest-type"]:checked').value;
-                if (selectedQuestType === 'custom') {
-                    const atributoId = input.id.replace('quest-', '');
-                    questsData.custom[atributoId] = parseFloat(input.value) || 0;
-                    calcularAtributos();
+        document.querySelectorAll('.quest-input').forEach(inp => {
+            inp.addEventListener('input', () => {
+                if (document.querySelector('input[name="quest-type"]:checked').value === 'custom') {
+                    questsData.custom[inp.id.replace('quest-', '')] = parseFloat(inp.value) || 0;
+                    calcular();
                 }
             });
         });
     }
 
     function updateQuestInputs() {
-        const selectedQuestType = document.querySelector('input[name="quest-type"]:checked').value;
-        const isCustom = selectedQuestType === 'custom';
-        const currentQuestValues = isCustom ? questsData['custom'] : questsData[selectedQuestType];
-
-        document.querySelectorAll('.quest-input').forEach(input => {
-            const atributoId = input.id.replace('quest-', '');
-            input.value = currentQuestValues[atributoId];
-            input.disabled = !isCustom;
+        const type = document.querySelector('input[name="quest-type"]:checked').value;
+        const isCustom = type === 'custom';
+        const vals = questsData[type];
+        document.querySelectorAll('.quest-input').forEach(inp => {
+            inp.value    = vals[inp.id.replace('quest-', '')];
+            inp.disabled = !isCustom;
         });
-        calcularAtributos();
+        calcular();
     }
 
-    function calcularAtributos() {
+    function calcular() {
         const nivel = parseFloat(nivelInput.value) || 0;
-        let porcentajeTotal = 0;
+        let total = 0;
+        document.querySelectorAll('.porcentaje').forEach(i => { total += parseFloat(i.value) || 0; });
 
-        document.querySelectorAll('.porcentaje').forEach(input => {
-            porcentajeTotal += parseFloat(input.value) || 0;
-        });
+        const fill   = document.getElementById('progress-fill');
+        const valEl  = document.getElementById('porcentaje-total-val');
+        const status = document.getElementById('progress-status');
 
-        const porcentajeOK = porcentajeTotal.toFixed(0) === '100';
-        porcentajeTotalDisplay.innerText = porcentajeTotal.toFixed(0);
-        const totalDisplayContainer = document.getElementById('porcentaje-total-display');
-        if (porcentajeOK) {
-            totalDisplayContainer.classList.remove('porcentaje-nok');
-            totalDisplayContainer.classList.add('porcentaje-ok');
+        const pct = Math.min(total, 200);
+        fill.style.width = (pct / 100 * 100) + '%';
+        valEl.textContent = total.toFixed(0) + '%';
+
+        fill.className = 'progress-bar-fill';
+        if (total === 100) {
+            fill.classList.add('exact');
+            valEl.style.color = 'var(--success)';
+            status.style.color = 'var(--success)';
+            status.textContent = '✔ Distribución completa';
+        } else if (total > 100) {
+            fill.classList.add('over');
+            valEl.style.color = 'var(--error)';
+            status.style.color = 'var(--error)';
+            status.textContent = '✘ Excede el 100% — ajustá los valores';
         } else {
-            totalDisplayContainer.classList.remove('porcentaje-ok');
-            totalDisplayContainer.classList.add('porcentaje-nok');
+            valEl.style.color = 'var(--accent2)';
+            status.style.color = 'var(--text-muted)';
+            status.textContent = `Faltan ${(100 - total).toFixed(0)}% por distribuir`;
         }
 
-        const questBonus = {};
-        document.querySelectorAll('.quest-input').forEach(input => {
-            const atributoId = input.id.replace('quest-', '');
-            questBonus[atributoId] = parseFloat(input.value) || 0;
+        const bonus = {};
+        document.querySelectorAll('.quest-input').forEach(i => {
+            bonus[i.id.replace('quest-', '')] = parseFloat(i.value) || 0;
         });
 
-        atributosData.forEach(atributo => {
-            const porcentajeInput = document.getElementById(`${atributo.id}-perc`);
-            const porcentaje = parseFloat(porcentajeInput.value) || 0;
-            const atributoValorSpan = document.getElementById(`${atributo.id}-valor`);
-            const optimalSpan = document.getElementById(`${atributo.id}-optimal`);
+        atributosData.forEach(a => {
+            const pctVal   = parseFloat(document.getElementById(`${a.id}-perc`).value) || 0;
+            const valorEl  = document.getElementById(`${a.id}-valor`);
+            const optEl    = document.getElementById(`${a.id}-optimal`);
+            let   val      = nivel * (pctVal / 100) * a.multiplier + bonus[a.id];
 
-            const valorNivel = nivel * (porcentaje / 100) * atributo.multiplier;
-            let valorFinal = valorNivel + questBonus[atributo.id];
-
-            if (atributo.cap !== null && valorFinal > atributo.cap) {
-                valorFinal = atributo.cap;
-                atributoValorSpan.classList.add('capped');
+            if (a.cap !== null && val > a.cap) {
+                val = a.cap;
+                valorEl.classList.add('capped');
             } else {
-                atributoValorSpan.classList.remove('capped');
+                valorEl.classList.remove('capped');
             }
 
-            atributoValorSpan.innerText = valorFinal.toFixed(2);
+            valorEl.textContent = val.toFixed(2);
 
-            if (atributo.cap !== null && optimalSpan) {
+            if (a.cap !== null && optEl) {
                 if (nivel > 0) {
-                    const puntosParaCap = atributo.cap - questBonus[atributo.id];
-                    const puntosNivelNecesarios = puntosParaCap / atributo.multiplier;
-                    let porcentajeIdeal = (puntosNivelNecesarios / nivel) * 100;
-                    optimalSpan.innerText = `(Óptimo: ${porcentajeIdeal.toFixed(2)}%)`;
+                    const ideal = ((a.cap - bonus[a.id]) / a.multiplier / nivel) * 100;
+                    optEl.textContent = `Óptimo: ${ideal.toFixed(2)}%`;
                 } else {
-                    optimalSpan.innerText = `(Óptimo: 0.00%)`;
+                    optEl.textContent = '';
                 }
             }
         });
     }
 
-    questOptions.forEach(radio => {
-        radio.addEventListener('change', updateQuestInputs);
-    });
-    nivelInput.addEventListener('input', calcularAtributos);
+    questOptions.forEach(r => r.addEventListener('change', updateQuestInputs));
+    nivelInput.addEventListener('input', calcular);
 
     createAttributeInputs();
     createQuestInputs();
     updateQuestInputs();
 </script>
-
 </body>
 </html>
